@@ -17,23 +17,39 @@ spec:
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:24.0.1
+
           args:
             - start-dev
+
           env:
             - name: KEYCLOAK_ADMIN
               value: admin
+              
             - name: KEYCLOAK_ADMIN_PASSWORD
               value: admin
+
             - name: KC_HOSTNAME
               value: keycloak
+
             - name: KC_HOSTNAME_STRICT
               value: "false"
+
+            - name: KC_HOSTNAME_STRICT_HTTPS
+              value: "false"
+
             - name: KC_HTTP_ENABLED
               value: "true"
+
             - name: KC_PROXY
               value: edge
+
+            - name: KC_DB
+              value: dev-file
+
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
+
           resources:
             requests:
               memory: "512Mi"
@@ -41,6 +57,7 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "1"
+
 ---
 apiVersion: v1
 kind: Service
@@ -54,6 +71,7 @@ spec:
       port: 8080
       targetPort: 8080
   type: ClusterIP
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
