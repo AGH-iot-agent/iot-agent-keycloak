@@ -13,17 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up K3s cluster
-        uses: AbsaOSS/k3d-action@v2
-        with:
-          cluster-name: iot-k3s
-          args: --wait
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
       - name: Deploy Keycloak manifest
         run: |
           kubectl apply -f iot-agent-keycloak/keycloak-k3s.yaml
