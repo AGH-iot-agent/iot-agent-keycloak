@@ -1,0 +1,37 @@
+name: Deploy Keycloak to k3s
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'iot-agent-keycloak/keycloak-k3s.yaml'
+
+jobs:
+  deploy-keycloak:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up K3s cluster
+        uses: AbsaOSS/k3d-action@v2
+        with:
+          cluster-name: iot-k3s
+          args: --wait
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Deploy Keycloak manifest
+        run: |
+          kubectl apply -f iot-agent-keycloak/keycloak-k3s.yaml
+
+      - name: Wait for Keycloak pod to be ready
+        run: |
+          kubectl rollout status deployment/keycloak --timeout=120s
+
+      - name: Show Keycloak service info
+        run: |
+          kubectl get svc keycloak -o wide
