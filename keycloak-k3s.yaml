@@ -51,7 +51,12 @@ metadata:
   namespace: iotag-dev
   annotations:
     kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
+  tls:
+    - hosts:
+        - iot-agent-auth-dev.iotag-dev.com
+      secretName: keycloak-tls
   rules:
     - host: iot-agent-auth-dev.iotag-dev.com
       http:
